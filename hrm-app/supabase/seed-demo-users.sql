@@ -1,6 +1,6 @@
 -- HRM v1.1 — 데모 사용자 시드 (수동 실행, self-contained)
 -- ⚠️ 이 스크립트는 supabase db push 후 SQL Editor에서 service_role로 실행한다.
--- 비밀번호: 모두 'Demo!2026' (운영 환경 절대 사용 금지)
+-- 비밀번호: 모두 'password' (운영 환경 절대 사용 금지)
 --
 -- ⚠️ 중요: supabase db push는 원격 DB에 seed.sql을 자동 적용하지 않는다.
 -- 이 파일은 self-contained로 만들어 부서·정책·휴가유형까지 한 번에 시드한다.
@@ -96,7 +96,7 @@ BEGIN
     recovery_token, phone_change, phone_change_token, reauthentication_token
   )
   VALUES (admin_id, '00000000-0000-0000-0000-000000000000', 'admin@hrm.demo',
-    crypt('Demo!2026', gen_salt('bf')), now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
+    crypt('password', gen_salt('bf')), now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
     'authenticated', 'authenticated', now(), now(),
     '', '', '', '', '', '', '', '')
   ON CONFLICT (id) DO NOTHING;
@@ -109,7 +109,7 @@ BEGIN
     recovery_token, phone_change, phone_change_token, reauthentication_token
   )
   VALUES (mgr1_id, '00000000-0000-0000-0000-000000000000', 'manager.dev@hrm.demo',
-    crypt('Demo!2026', gen_salt('bf')), now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
+    crypt('password', gen_salt('bf')), now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
     'authenticated', 'authenticated', now(), now(),
     '', '', '', '', '', '', '', '')
   ON CONFLICT (id) DO NOTHING;
@@ -122,7 +122,7 @@ BEGIN
     recovery_token, phone_change, phone_change_token, reauthentication_token
   )
   VALUES (mgr2_id, '00000000-0000-0000-0000-000000000000', 'manager.design@hrm.demo',
-    crypt('Demo!2026', gen_salt('bf')), now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
+    crypt('password', gen_salt('bf')), now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
     'authenticated', 'authenticated', now(), now(),
     '', '', '', '', '', '', '', '')
   ON CONFLICT (id) DO NOTHING;
@@ -139,7 +139,7 @@ BEGIN
       emp_ids[i],
       '00000000-0000-0000-0000-000000000000',
       emp_names[i][2] || '@hrm.demo',
-      crypt('Demo!2026', gen_salt('bf')),
+      crypt('password', gen_salt('bf')),
       now(), '{"provider":"email"}'::jsonb, '{}'::jsonb,
       'authenticated', 'authenticated', now(), now(),
       '', '', '', '', '', '', '', ''

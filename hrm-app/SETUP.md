@@ -78,7 +78,7 @@ npm run db:push     # = supabase db push
 1. Supabase Dashboard → **SQL Editor** 열기
 2. `supabase/seed-demo-users.sql` 내용 복사 → 붙여넣기 → **Run**
 
-데모 계정 (비밀번호 모두 `Demo!2026`):
+데모 계정 (비밀번호 모두 `password`):
 | 이메일 | 역할 | 메모 |
 |--------|------|------|
 | `admin@hrm.demo` | admin | HR 매니저 |

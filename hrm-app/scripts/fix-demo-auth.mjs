@@ -35,7 +35,7 @@ let count = 0;
 for (const u of data.users) {
   if (!u.email?.endsWith('@hrm.demo')) continue;
   const { error: upErr } = await supabase.auth.admin.updateUserById(u.id, {
-    password: 'Demo!2026',
+    password: 'password',
     email_confirm: true,
   });
   if (upErr) {

@@ -26,7 +26,7 @@ supabase db push
 
 # 4) (선택) 데모 데이터 시드
 #    Supabase Dashboard > SQL Editor에서 supabase/seed-demo-users.sql 실행
-#    → admin 1 + manager 2 + employee 10, 비밀번호 모두 Demo!2026
+#    → admin 1 + manager 2 + employee 10, 비밀번호 모두 password
 
 # 5) dev 서버
 npm run dev
@@ -157,9 +157,9 @@ import type { UserRole, LeaveRequestStatus, LeavePeriod } from '@/types/database
 
 | 이메일 | 비밀번호 | 역할 |
 |-------|---------|------|
-| admin@hrm.demo | Demo!2026 | admin (HR 매니저) |
-| manager.dev@hrm.demo | Demo!2026 | manager (개발본부) |
-| manager.design@hrm.demo | Demo!2026 | manager (디자인팀) |
-| employee01@hrm.demo ~ employee10@hrm.demo | Demo!2026 | employee |
+| admin@hrm.demo | password | admin (HR 매니저) |
+| manager.dev@hrm.demo | password | manager (개발본부) |
+| manager.design@hrm.demo | password | manager (디자인팀) |
+| employee01@hrm.demo ~ employee10@hrm.demo | password | employee |
 
 ⚠️ 운영 환경 절대 사용 금지.
