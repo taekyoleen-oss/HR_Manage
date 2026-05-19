@@ -29,6 +29,79 @@ export const EMPLOYEE_ALLOWED_COLUMNS = [
   '입사일',
 ] as const;
 
+// 출장 CSV 화이트리스트 (v1.2)
+export const TRIP_ALLOWED_COLUMNS = [
+  '신청ID',
+  '직원명',
+  '부서',
+  '구분',
+  '목적지',
+  '시작일',
+  '종료일',
+  '교통수단',
+  '목적',
+  '상태',
+  '신청일',
+  '승인일',
+  '완료일',
+] as const;
+
+// 교육 CSV 화이트리스트 (v1.2)
+export const TRAINING_ALLOWED_COLUMNS = [
+  '직원명',
+  '부서',
+  '교육명',
+  '제공처',
+  '카테고리',
+  '시작일',
+  '종료일',
+  '이수시간',
+  '비용',
+] as const;
+
+// 자산 CSV 화이트리스트 (v1.2)
+export const ASSET_ALLOWED_COLUMNS = [
+  '자산번호',
+  '분류',
+  '모델명',
+  '시리얼',
+  '상태',
+  '현재사용자',
+  '구입일',
+  '구입가',
+] as const;
+
+export const TRIP_TYPE_LABEL_KO: Record<string, string> = {
+  domestic: '국내',
+  overseas: '해외',
+};
+
+export const TRIP_STATUS_LABEL_KO: Record<string, string> = {
+  pending: '결재대기',
+  approved: '승인',
+  rejected: '반려',
+  cancelled: '취소',
+  in_progress: '출장중',
+  completed: '완료',
+};
+
+export const TRIP_TRANSPORT_LABEL_KO: Record<string, string> = {
+  flight: '항공',
+  train: '철도',
+  bus: '버스',
+  car_company: '법인차량',
+  car_personal: '자가용',
+  ship: '선박',
+  other: '기타',
+};
+
+export const ASSET_STATUS_LABEL_KO: Record<string, string> = {
+  available: '보관',
+  assigned: '배정',
+  in_repair: '수리',
+  retired: '폐기',
+};
+
 // 금지 컬럼 목록 — 빌드 시 grep로 점검.
 export const FORBIDDEN_CSV_COLUMNS = [
   '주민번호',

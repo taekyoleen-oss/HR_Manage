@@ -1,6 +1,8 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createServerClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 import { AssetManager } from './asset-manager';
 
 export const dynamic = 'force-dynamic';
@@ -18,9 +20,14 @@ export default async function AdminAssetsPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold">자산 관리</h1>
-        <p className="text-sm text-muted-foreground">노트북·모니터·기타 장비 자산을 등록하고 직원에게 배정/반납 처리합니다.</p>
+      <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">자산 관리</h1>
+          <p className="text-sm text-muted-foreground">노트북·모니터·기타 장비 자산을 등록하고 직원에게 배정/반납 처리합니다.</p>
+        </div>
+        <a href="/api/exports/assets-csv">
+          <Button variant="outline" className="h-11 md:h-9"><Download className="h-4 w-4" /> CSV 다운로드</Button>
+        </a>
       </header>
 
       <Card>

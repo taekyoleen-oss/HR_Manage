@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { requireAdmin } from '@/lib/auth/guards';
 import { getAllBusinessTripsForAdmin } from '@/lib/business-trips/queries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 import { TripStatusBadge } from '@/components/common/trip-status-badge';
 import { TRIP_TYPE_LABEL, TRIP_STATUS_LABEL, type BusinessTripStatus } from '@/types/hrm';
 import { EmptyState } from '@/components/common/empty-state';
@@ -35,9 +37,14 @@ export default async function AdminTripsPage({
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold">출장 현황 (관리자)</h1>
-        <p className="text-sm text-muted-foreground">전사 출장 신청·진행 현황을 한눈에 확인합니다.</p>
+      <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">출장 현황 (관리자)</h1>
+          <p className="text-sm text-muted-foreground">전사 출장 신청·진행 현황을 한눈에 확인합니다.</p>
+        </div>
+        <a href="/api/exports/trips-csv">
+          <Button variant="outline" className="h-11 md:h-9"><Download className="h-4 w-4" /> CSV 다운로드</Button>
+        </a>
       </header>
 
       <div className="flex flex-wrap gap-2">

@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/leave-expiration",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/trips-in-progress",
+      "schedule": "0 21 * * *"
     }
   ]
 }
