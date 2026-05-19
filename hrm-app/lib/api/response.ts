@@ -39,6 +39,16 @@ export const PG_ERROR_MAP: Record<string, { message: string; status: number }> =
   PAST_START_DATE: { message: '시작일이 지나 본인이 취소할 수 없습니다. 관리자에게 문의하세요', status: 409 },
   FORBIDDEN: { message: '권한이 없습니다', status: 403 },
   INSUFFICIENT_BALANCE: { message: '잔여 휴가가 부족합니다', status: 422 },
+  // v1.2 — 경조사
+  POLICY_NOT_FOUND: { message: '선택한 경조사 기준이 없거나 비활성화되었습니다', status: 404 },
+  EXCEEDS_POLICY: { message: '정책 기준 일수를 초과했습니다. 초과분은 연차 또는 무급 휴가로 분리 신청하세요', status: 422 },
+  USAGE_LIMIT_EXCEEDED: { message: '이 사유는 이미 사용 한도에 도달했습니다', status: 409 },
+  LEAVE_TYPE_NOT_FOUND: { message: '경조사 휴가 유형이 정의되지 않았습니다 (관리자 문의)', status: 500 },
+  // v1.2 — 공통
+  INVALID_DATE_RANGE: { message: '시작일이 종료일보다 늦습니다', status: 422 },
+  PURPOSE_REQUIRED: { message: '출장 목적을 입력하세요', status: 422 },
+  REPORT_REQUIRED: { message: '복귀 보고서를 입력하세요', status: 422 },
+  REASON_REQUIRED: { message: '사유를 입력하세요', status: 422 },
 };
 
 export function failFromPg(message: string | undefined | null) {

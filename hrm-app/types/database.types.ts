@@ -12,8 +12,197 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      hrm_announcements: {
+        Row: {
+          author_id: string | null
+          body: string
+          category: Database["public"]["Enums"]["hrm_announcement_category"]
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_pinned: boolean
+          is_published: boolean
+          published_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          body: string
+          category?: Database["public"]["Enums"]["hrm_announcement_category"]
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_pinned?: boolean
+          is_published?: boolean
+          published_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          category?: Database["public"]["Enums"]["hrm_announcement_category"]
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_pinned?: boolean
+          is_published?: boolean
+          published_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_announcements_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hrm_asset_assignments: {
+        Row: {
+          asset_id: string
+          assigned_at: string
+          condition_on_assign: string | null
+          condition_on_return: string | null
+          employee_id: string
+          id: string
+          notes: string | null
+          performed_by: string | null
+          returned_at: string | null
+        }
+        Insert: {
+          asset_id: string
+          assigned_at?: string
+          condition_on_assign?: string | null
+          condition_on_return?: string | null
+          employee_id: string
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          returned_at?: string | null
+        }
+        Update: {
+          asset_id?: string
+          assigned_at?: string
+          condition_on_assign?: string | null
+          condition_on_return?: string | null
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          returned_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_asset_assignments_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_asset_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_asset_assignments_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hrm_assets: {
+        Row: {
+          asset_no: string
+          category: string
+          created_at: string
+          current_assigned_at: string | null
+          current_assignee_id: string | null
+          id: string
+          name: string
+          notes: string | null
+          purchase_price: number | null
+          purchased_at: string | null
+          serial_no: string | null
+          status: Database["public"]["Enums"]["hrm_asset_status"]
+          updated_at: string
+        }
+        Insert: {
+          asset_no: string
+          category: string
+          created_at?: string
+          current_assigned_at?: string | null
+          current_assignee_id?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          purchase_price?: number | null
+          purchased_at?: string | null
+          serial_no?: string | null
+          status?: Database["public"]["Enums"]["hrm_asset_status"]
+          updated_at?: string
+        }
+        Update: {
+          asset_no?: string
+          category?: string
+          created_at?: string
+          current_assigned_at?: string | null
+          current_assignee_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          purchase_price?: number | null
+          purchased_at?: string | null
+          serial_no?: string | null
+          status?: Database["public"]["Enums"]["hrm_asset_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_assets_current_assignee_id_fkey"
+            columns: ["current_assignee_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hrm_audit_logs: {
         Row: {
           action: string
@@ -49,6 +238,148 @@ export type Database = {
           {
             foreignKeyName: "hrm_audit_logs_actor_id_fkey"
             columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hrm_business_trip_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          notes: string | null
+          performed_by: string | null
+          trip_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          trip_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_business_trip_events_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_business_trip_events_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_business_trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hrm_business_trips: {
+        Row: {
+          accommodation: string | null
+          accompanying_employee_ids: string[] | null
+          approved_at: string | null
+          approver_id: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          completed_at: string | null
+          completion_report: string | null
+          created_at: string
+          destination_city: string | null
+          destination_country: string
+          employee_id: string
+          end_date: string
+          id: string
+          notes: string | null
+          purpose: string
+          rejection_reason: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["hrm_business_trip_status"]
+          transportation: Database["public"]["Enums"]["hrm_business_trip_transport"]
+          trip_type: Database["public"]["Enums"]["hrm_business_trip_type"]
+          updated_at: string
+        }
+        Insert: {
+          accommodation?: string | null
+          accompanying_employee_ids?: string[] | null
+          approved_at?: string | null
+          approver_id?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          completed_at?: string | null
+          completion_report?: string | null
+          created_at?: string
+          destination_city?: string | null
+          destination_country: string
+          employee_id: string
+          end_date: string
+          id?: string
+          notes?: string | null
+          purpose: string
+          rejection_reason?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["hrm_business_trip_status"]
+          transportation?: Database["public"]["Enums"]["hrm_business_trip_transport"]
+          trip_type: Database["public"]["Enums"]["hrm_business_trip_type"]
+          updated_at?: string
+        }
+        Update: {
+          accommodation?: string | null
+          accompanying_employee_ids?: string[] | null
+          approved_at?: string | null
+          approver_id?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          completed_at?: string | null
+          completion_report?: string | null
+          created_at?: string
+          destination_city?: string | null
+          destination_country?: string
+          employee_id?: string
+          end_date?: string
+          id?: string
+          notes?: string | null
+          purpose?: string
+          rejection_reason?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["hrm_business_trip_status"]
+          transportation?: Database["public"]["Enums"]["hrm_business_trip_transport"]
+          trip_type?: Database["public"]["Enums"]["hrm_business_trip_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_business_trips_approver_id_fkey"
+            columns: ["approver_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_business_trips_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_business_trips_employee_id_fkey"
+            columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "hrm_employees"
             referencedColumns: ["id"]
@@ -527,6 +858,54 @@ export type Database = {
           },
         ]
       }
+      hrm_family_event_policies: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          event_kind: Database["public"]["Enums"]["hrm_family_event_kind"]
+          granted_days: number
+          id: string
+          is_active: boolean
+          name: string
+          relation: Database["public"]["Enums"]["hrm_family_relation"]
+          required_attachment_note: string | null
+          sort_order: number
+          updated_at: string
+          usage_limit: Database["public"]["Enums"]["hrm_family_event_usage_limit"]
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          event_kind: Database["public"]["Enums"]["hrm_family_event_kind"]
+          granted_days: number
+          id?: string
+          is_active?: boolean
+          name: string
+          relation: Database["public"]["Enums"]["hrm_family_relation"]
+          required_attachment_note?: string | null
+          sort_order?: number
+          updated_at?: string
+          usage_limit?: Database["public"]["Enums"]["hrm_family_event_usage_limit"]
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          event_kind?: Database["public"]["Enums"]["hrm_family_event_kind"]
+          granted_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          relation?: Database["public"]["Enums"]["hrm_family_relation"]
+          required_attachment_note?: string | null
+          sort_order?: number
+          updated_at?: string
+          usage_limit?: Database["public"]["Enums"]["hrm_family_event_usage_limit"]
+        }
+        Relationships: []
+      }
       hrm_leave_balances: {
         Row: {
           adjusted_days: number
@@ -624,6 +1003,7 @@ export type Database = {
           employee_id: string
           end_date: string
           end_period: Database["public"]["Enums"]["hrm_leave_period"]
+          family_event_policy_id: string | null
           id: string
           leave_type_id: string
           reason: string | null
@@ -644,6 +1024,7 @@ export type Database = {
           employee_id: string
           end_date: string
           end_period?: Database["public"]["Enums"]["hrm_leave_period"]
+          family_event_policy_id?: string | null
           id?: string
           leave_type_id: string
           reason?: string | null
@@ -664,6 +1045,7 @@ export type Database = {
           employee_id?: string
           end_date?: string
           end_period?: Database["public"]["Enums"]["hrm_leave_period"]
+          family_event_policy_id?: string | null
           id?: string
           leave_type_id?: string
           reason?: string | null
@@ -694,6 +1076,13 @@ export type Database = {
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_leave_requests_family_event_policy_id_fkey"
+            columns: ["family_event_policy_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_family_event_policies"
             referencedColumns: ["id"]
           },
           {
@@ -874,6 +1263,218 @@ export type Database = {
           },
         ]
       }
+      hrm_position_history: {
+        Row: {
+          change_type: Database["public"]["Enums"]["hrm_position_change_type"]
+          created_at: string
+          effective_date: string
+          employee_id: string
+          from_department_id: string | null
+          from_position: string | null
+          from_role: Database["public"]["Enums"]["hrm_user_role"] | null
+          id: string
+          notes: string | null
+          performed_by: string | null
+          to_department_id: string | null
+          to_position: string | null
+          to_role: Database["public"]["Enums"]["hrm_user_role"] | null
+        }
+        Insert: {
+          change_type: Database["public"]["Enums"]["hrm_position_change_type"]
+          created_at?: string
+          effective_date: string
+          employee_id: string
+          from_department_id?: string | null
+          from_position?: string | null
+          from_role?: Database["public"]["Enums"]["hrm_user_role"] | null
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          to_department_id?: string | null
+          to_position?: string | null
+          to_role?: Database["public"]["Enums"]["hrm_user_role"] | null
+        }
+        Update: {
+          change_type?: Database["public"]["Enums"]["hrm_position_change_type"]
+          created_at?: string
+          effective_date?: string
+          employee_id?: string
+          from_department_id?: string | null
+          from_position?: string | null
+          from_role?: Database["public"]["Enums"]["hrm_user_role"] | null
+          id?: string
+          notes?: string | null
+          performed_by?: string | null
+          to_department_id?: string | null
+          to_position?: string | null
+          to_role?: Database["public"]["Enums"]["hrm_user_role"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_position_history_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_position_history_from_department_id_fkey"
+            columns: ["from_department_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_position_history_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_position_history_to_department_id_fkey"
+            columns: ["to_department_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hrm_remote_work_requests: {
+        Row: {
+          approved_at: string | null
+          approver_id: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          contact_method: string | null
+          created_at: string
+          employee_id: string
+          end_date: string
+          id: string
+          reason: string
+          rejection_reason: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["hrm_remote_work_status"]
+          total_days: number
+          updated_at: string
+          work_location: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approver_id?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          contact_method?: string | null
+          created_at?: string
+          employee_id: string
+          end_date: string
+          id?: string
+          reason: string
+          rejection_reason?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["hrm_remote_work_status"]
+          total_days: number
+          updated_at?: string
+          work_location?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approver_id?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          contact_method?: string | null
+          created_at?: string
+          employee_id?: string
+          end_date?: string
+          id?: string
+          reason?: string
+          rejection_reason?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["hrm_remote_work_status"]
+          total_days?: number
+          updated_at?: string
+          work_location?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_remote_work_requests_approver_id_fkey"
+            columns: ["approver_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_remote_work_requests_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hrm_remote_work_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hrm_training_records: {
+        Row: {
+          category: string | null
+          certificate_url: string | null
+          cost: number | null
+          created_at: string
+          employee_id: string
+          end_date: string | null
+          hours: number | null
+          id: string
+          notes: string | null
+          provider: string | null
+          start_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          certificate_url?: string | null
+          cost?: number | null
+          created_at?: string
+          employee_id: string
+          end_date?: string | null
+          hours?: number | null
+          id?: string
+          notes?: string | null
+          provider?: string | null
+          start_date: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          certificate_url?: string | null
+          cost?: number | null
+          created_at?: string
+          employee_id?: string
+          end_date?: string | null
+          hours?: number | null
+          id?: string
+          notes?: string | null
+          provider?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hrm_training_records_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "hrm_employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       hrm_leave_balances_view: {
@@ -928,10 +1529,21 @@ export type Database = {
       }
     }
     Functions: {
+      approve_business_trip: { Args: { req_id: string }; Returns: Json }
       approve_leave_request: { Args: { req_id: string }; Returns: Json }
+      approve_remote_work: { Args: { req_id: string }; Returns: Json }
       can_cancel_request: { Args: { req_id: string }; Returns: boolean }
+      cancel_business_trip: {
+        Args: { p_reason: string; req_id: string }
+        Returns: Json
+      }
       cancel_leave_request: {
         Args: { p_reason: string; req_id: string }
+        Returns: Json
+      }
+      cancel_remote_work: { Args: { req_id: string }; Returns: Json }
+      complete_business_trip: {
+        Args: { p_report: string; req_id: string }
         Returns: Json
       }
       is_active_user: { Args: never; Returns: boolean }
@@ -942,9 +1554,43 @@ export type Database = {
         Args: { p_notification_id: string }
         Returns: undefined
       }
+      promote_trips_in_progress: { Args: never; Returns: number }
+      reject_business_trip: {
+        Args: { p_reason: string; req_id: string }
+        Returns: Json
+      }
       reject_leave_request: {
         Args: { p_reason: string; req_id: string }
         Returns: Json
+      }
+      reject_remote_work: {
+        Args: { p_reason: string; req_id: string }
+        Returns: Json
+      }
+      submit_business_trip: {
+        Args: {
+          p_accommodation: string
+          p_accompanying: string[]
+          p_destination_city: string
+          p_destination_country: string
+          p_end_date: string
+          p_notes: string
+          p_purpose: string
+          p_start_date: string
+          p_transportation: Database["public"]["Enums"]["hrm_business_trip_transport"]
+          p_trip_type: Database["public"]["Enums"]["hrm_business_trip_type"]
+        }
+        Returns: string
+      }
+      submit_family_event_leave: {
+        Args: {
+          p_end_date: string
+          p_policy_id: string
+          p_reason: string
+          p_start_date: string
+          p_total_days: number
+        }
+        Returns: string
       }
       submit_leave_request: {
         Args: {
@@ -958,10 +1604,66 @@ export type Database = {
         }
         Returns: string
       }
+      submit_remote_work: {
+        Args: {
+          p_contact_method: string
+          p_end_date: string
+          p_reason: string
+          p_start_date: string
+          p_total_days: number
+          p_work_location: string
+        }
+        Returns: string
+      }
     }
     Enums: {
+      hrm_announcement_category:
+        | "general"
+        | "policy"
+        | "event"
+        | "system"
+        | "hr"
+        | "urgent"
+      hrm_asset_status: "available" | "assigned" | "in_repair" | "retired"
+      hrm_business_trip_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "cancelled"
+        | "in_progress"
+        | "completed"
+      hrm_business_trip_transport:
+        | "flight"
+        | "train"
+        | "bus"
+        | "car_company"
+        | "car_personal"
+        | "ship"
+        | "other"
+      hrm_business_trip_type: "domestic" | "overseas"
       hrm_employment_status: "active" | "on_leave" | "resigned"
       hrm_employment_type: "regular" | "contract" | "intern" | "part_time"
+      hrm_family_event_kind:
+        | "wedding"
+        | "funeral"
+        | "birth"
+        | "maternity"
+        | "sixtieth"
+        | "other"
+      hrm_family_event_usage_limit:
+        | "once_lifetime"
+        | "once_per_year"
+        | "once_per_target"
+        | "unlimited"
+      hrm_family_relation:
+        | "self"
+        | "spouse"
+        | "child"
+        | "parent"
+        | "parent_in_law"
+        | "sibling"
+        | "grandparent"
+        | "grandchild"
       hrm_gender: "male" | "female" | "other"
       hrm_leave_period: "full_day" | "am_half" | "pm_half" | "hourly"
       hrm_leave_policy_basis: "hire_date" | "fiscal_year"
@@ -989,6 +1691,15 @@ export type Database = {
         | "leave_rejected"
         | "leave_cancelled_by_employee"
         | "employee_invitation"
+      hrm_position_change_type:
+        | "hire"
+        | "promotion"
+        | "demotion"
+        | "transfer"
+        | "role_change"
+        | "resignation"
+        | "other"
+      hrm_remote_work_status: "pending" | "approved" | "rejected" | "cancelled"
       hrm_user_role: "employee" | "manager" | "admin"
     }
     CompositeTypes: {
@@ -1115,10 +1826,64 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
+      hrm_announcement_category: [
+        "general",
+        "policy",
+        "event",
+        "system",
+        "hr",
+        "urgent",
+      ],
+      hrm_asset_status: ["available", "assigned", "in_repair", "retired"],
+      hrm_business_trip_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "cancelled",
+        "in_progress",
+        "completed",
+      ],
+      hrm_business_trip_transport: [
+        "flight",
+        "train",
+        "bus",
+        "car_company",
+        "car_personal",
+        "ship",
+        "other",
+      ],
+      hrm_business_trip_type: ["domestic", "overseas"],
       hrm_employment_status: ["active", "on_leave", "resigned"],
       hrm_employment_type: ["regular", "contract", "intern", "part_time"],
+      hrm_family_event_kind: [
+        "wedding",
+        "funeral",
+        "birth",
+        "maternity",
+        "sixtieth",
+        "other",
+      ],
+      hrm_family_event_usage_limit: [
+        "once_lifetime",
+        "once_per_year",
+        "once_per_target",
+        "unlimited",
+      ],
+      hrm_family_relation: [
+        "self",
+        "spouse",
+        "child",
+        "parent",
+        "parent_in_law",
+        "sibling",
+        "grandparent",
+        "grandchild",
+      ],
       hrm_gender: ["male", "female", "other"],
       hrm_leave_period: ["full_day", "am_half", "pm_half", "hourly"],
       hrm_leave_policy_basis: ["hire_date", "fiscal_year"],
@@ -1150,6 +1915,16 @@ export const Constants = {
         "leave_cancelled_by_employee",
         "employee_invitation",
       ],
+      hrm_position_change_type: [
+        "hire",
+        "promotion",
+        "demotion",
+        "transfer",
+        "role_change",
+        "resignation",
+        "other",
+      ],
+      hrm_remote_work_status: ["pending", "approved", "rejected", "cancelled"],
       hrm_user_role: ["employee", "manager", "admin"],
     },
   },

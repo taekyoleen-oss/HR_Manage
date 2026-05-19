@@ -5,11 +5,14 @@ import {
   getMyApprovalsCount,
   getTeamLeaveThisMonth,
 } from '@/lib/employees/queries';
+import { getActiveAnnouncements } from '@/lib/announcements/queries';
+import { getUpcomingAnniversaries } from '@/lib/anniversaries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LeaveStatusBadge } from '@/components/common/leave-status-badge';
-import { CalendarDays, Inbox, Users } from 'lucide-react';
+import { CalendarDays, Cake, Gift, Inbox, Megaphone, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/common/empty-state';
+import { ANNOUNCEMENT_CATEGORY_LABEL, type AnnouncementCategory } from '@/types/hrm';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +20,13 @@ export default async function DashboardPage() {
   const user = await requireUser();
   const year = new Date().getFullYear();
 
-  const [balance, myRecent, approvalsCount, teamLeaves] = await Promise.all([
+  const [balance, myRecent, approvalsCount, teamLeaves, announcements, anniversaries] = await Promise.all([
     getMyLeaveBalance(user.employeeId, year),
     getMyLeaveRequests(user.employeeId, 3),
     user.role !== 'employee' ? getMyApprovalsCount(user.employeeId) : Promise.resolve(0),
     user.role !== 'employee' ? getTeamLeaveThisMonth(user.employeeId) : Promise.resolve([]),
+    getActiveAnnouncements(3),
+    getUpcomingAnniversaries(14),
   ]);
 
   return (
@@ -41,10 +46,9 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground">
             사용 {Number(balance?.used_days ?? 0).toFixed(1)}일 · 대기 {Number(balance?.pending_days ?? 0).toFixed(1)}일
-            <div className="mt-3">
-              <Link href="/leave/request">
-                <Button size="sm" className="h-9">휴가 신청</Button>
-              </Link>
+            <div className="mt-3 flex gap-1.5">
+              <Link href="/leave/request"><Button size="sm" className="h-9">휴가 신청</Button></Link>
+              <Link href="/trips/new"><Button size="sm" variant="outline" className="h-9">출장 신청</Button></Link>
             </div>
           </CardContent>
         </Card>
@@ -59,9 +63,7 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent className="text-xs text-muted-foreground">
               <div className="mt-3">
-                <Link href="/approvals">
-                  <Button size="sm" variant="outline" className="h-9">결재함 열기</Button>
-                </Link>
+                <Link href="/approvals"><Button size="sm" variant="outline" className="h-9">결재함 열기</Button></Link>
               </div>
             </CardContent>
           </Card>
@@ -77,13 +79,76 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent className="text-xs text-muted-foreground">
               <div className="mt-3">
-                <Link href="/team">
-                  <Button size="sm" variant="outline" className="h-9">우리 팀 보기</Button>
-                </Link>
+                <Link href="/team"><Button size="sm" variant="outline" className="h-9">우리 팀 보기</Button></Link>
               </div>
             </CardContent>
           </Card>
         )}
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Megaphone className="h-5 w-5" /> 최근 공지사항</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {announcements.length === 0 ? (
+              <EmptyState title="등록된 공지가 없습니다" />
+            ) : (
+              <ul className="divide-y divide-border">
+                {announcements.map((a) => (
+                  <li key={a.id} className="py-2.5">
+                    <Link href="/announcements" className="block">
+                      <div className="text-sm font-medium truncate">{a.title}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        {ANNOUNCEMENT_CATEGORY_LABEL[a.category as AnnouncementCategory]} ·
+                        {' '}{new Date(a.published_at).toLocaleDateString('ko-KR')}
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-3">
+              <Link href="/announcements"><Button size="sm" variant="outline" className="h-9">전체 보기</Button></Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Cake className="h-5 w-5" /> 다가오는 기념일 (2주)</CardTitle>
+            <CardDescription>생일·입사 N주년</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {anniversaries.birthdays.length === 0 && anniversaries.hireAnniversaries.length === 0 ? (
+              <EmptyState title="2주 내 기념일이 없습니다" />
+            ) : (
+              <ul className="divide-y divide-border">
+                {anniversaries.birthdays.map((b) => (
+                  <li key={`b-${b.id}`} className="py-2.5 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium truncate flex items-center gap-1.5">
+                        <Cake className="h-3.5 w-3.5 text-warning" /> {b.name_ko}님 생일
+                      </div>
+                      <div className="text-xs text-muted-foreground">{b.occurOn}</div>
+                    </div>
+                  </li>
+                ))}
+                {anniversaries.hireAnniversaries.map((h) => (
+                  <li key={`h-${h.id}`} className="py-2.5 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium truncate flex items-center gap-1.5">
+                        <Gift className="h-3.5 w-3.5 text-accent" /> {h.name_ko}님 입사 {h.years}주년
+                      </div>
+                      <div className="text-xs text-muted-foreground">{h.occurOn}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">

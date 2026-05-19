@@ -1,5 +1,6 @@
 import { requireUser } from '@/lib/auth/guards';
 import { getActiveLeaveTypes, getMyLeaveBalance } from '@/lib/leave/queries';
+import { getActiveFamilyEventPolicies } from '@/lib/family-events/queries';
 import { LeaveRequestForm } from './leave-request-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -8,9 +9,10 @@ export const dynamic = 'force-dynamic';
 export default async function LeaveRequestPage() {
   const user = await requireUser();
   const year = new Date().getFullYear();
-  const [types, balance] = await Promise.all([
+  const [types, balance, familyPolicies] = await Promise.all([
     getActiveLeaveTypes(),
     getMyLeaveBalance(user.employeeId, year),
+    getActiveFamilyEventPolicies(),
   ]);
 
   return (
@@ -25,10 +27,10 @@ export default async function LeaveRequestPage() {
       <Card>
         <CardHeader>
           <CardTitle>신청 내용</CardTitle>
-          <CardDescription>휴가 유형, 기간을 입력하고 제출하세요.</CardDescription>
+          <CardDescription>휴가 유형, 기간을 입력하고 제출하세요. 경조사 휴가는 사유를 추가로 선택합니다.</CardDescription>
         </CardHeader>
         <CardContent>
-          <LeaveRequestForm leaveTypes={types} />
+          <LeaveRequestForm leaveTypes={types} familyPolicies={familyPolicies} />
         </CardContent>
       </Card>
     </div>
