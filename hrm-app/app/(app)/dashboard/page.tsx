@@ -7,9 +7,10 @@ import {
 } from '@/lib/employees/queries';
 import { getActiveAnnouncements } from '@/lib/announcements/queries';
 import { getUpcomingAnniversaries } from '@/lib/anniversaries';
+import { getAdminOperationalMetrics } from '@/lib/admin-metrics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LeaveStatusBadge } from '@/components/common/leave-status-badge';
-import { CalendarDays, Cake, Gift, Inbox, Megaphone, Users } from 'lucide-react';
+import { CalendarDays, Cake, Gift, Inbox, Megaphone, Users, Plane, UserPlus, Laptop } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/common/empty-state';
 import { ANNOUNCEMENT_CATEGORY_LABEL, type AnnouncementCategory } from '@/types/hrm';
@@ -20,13 +21,14 @@ export default async function DashboardPage() {
   const user = await requireUser();
   const year = new Date().getFullYear();
 
-  const [balance, myRecent, approvalsCount, teamLeaves, announcements, anniversaries] = await Promise.all([
+  const [balance, myRecent, approvalsCount, teamLeaves, announcements, anniversaries, adminMetrics] = await Promise.all([
     getMyLeaveBalance(user.employeeId, year),
     getMyLeaveRequests(user.employeeId, 3),
     user.role !== 'employee' ? getMyApprovalsCount(user.employeeId) : Promise.resolve(0),
     user.role !== 'employee' ? getTeamLeaveThisMonth(user.employeeId) : Promise.resolve([]),
     getActiveAnnouncements(3),
     getUpcomingAnniversaries(14),
+    user.role === 'admin' ? getAdminOperationalMetrics() : Promise.resolve(null),
   ]);
 
   return (
@@ -35,6 +37,46 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold">안녕하세요, {user.name}님</h1>
         <p className="text-sm text-muted-foreground">{year}년 {new Date().getMonth() + 1}월 — HRM 대시보드</p>
       </header>
+
+      {adminMetrics && (
+        <section className="space-y-2">
+          <h2 className="text-sm font-semibold text-muted-foreground">관리자 운영 지표</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Inbox className="h-3.5 w-3.5" /> 전사 대기 결재</div>
+                <div className="mt-1 text-2xl font-bold tabular-nums">
+                  {adminMetrics.pending.total}<span className="ml-1 text-xs text-muted-foreground font-medium">건</span>
+                </div>
+                <div className="mt-1 text-[10px] text-muted-foreground">
+                  휴가 {adminMetrics.pending.leave} · 출장 {adminMetrics.pending.trip} · 재택 {adminMetrics.pending.remote}
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Plane className="h-3.5 w-3.5" /> 오늘 출장중</div>
+                <div className="mt-1 text-2xl font-bold tabular-nums">{adminMetrics.tripsInProgress}<span className="ml-1 text-xs text-muted-foreground font-medium">명</span></div>
+                <div className="mt-1 text-[10px] text-muted-foreground">시작일 도래 + 미완료</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><UserPlus className="h-3.5 w-3.5" /> 이달 신규 입사</div>
+                <div className="mt-1 text-2xl font-bold tabular-nums">{adminMetrics.newHiresThisMonth}<span className="ml-1 text-xs text-muted-foreground font-medium">명</span></div>
+                <div className="mt-1 text-[10px] text-muted-foreground">활성 전체 {adminMetrics.activeEmployees}명</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Laptop className="h-3.5 w-3.5" /> 자산 배정</div>
+                <div className="mt-1 text-2xl font-bold tabular-nums">{adminMetrics.assets.assigned}<span className="ml-1 text-xs text-muted-foreground font-medium">건</span></div>
+                <div className="mt-1 text-[10px] text-muted-foreground">보관 중 {adminMetrics.assets.available}건</div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      )}
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-primary/30">
