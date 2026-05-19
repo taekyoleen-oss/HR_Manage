@@ -56,5 +56,115 @@ export function renderMessage(kind: NotifyKind, vars: Vars = {}): RenderedMessag
         linkPath: null,
       };
     }
+
+    // ============================
+    // v1.2.1 — 출장
+    // ============================
+    case 'trip_submitted': {
+      const emp = vars.employeeName ?? '직원';
+      const dest = vars.destination ?? '';
+      const period = vars.period ?? '';
+      return {
+        title: '[HRM] 출장 결재 요청',
+        body: `${emp}님이 ${dest} 출장(${period})을 신청했습니다.`,
+        linkPath: '/approvals',
+      };
+    }
+    case 'trip_approved': {
+      const dest = vars.destination ?? '';
+      const period = vars.period ?? '';
+      return {
+        title: '[HRM] 출장 승인',
+        body: `${dest} 출장(${period})이 승인되었습니다.`,
+        linkPath: vars.tripId ? `/trips/${vars.tripId}` : '/trips',
+      };
+    }
+    case 'trip_rejected': {
+      const dest = vars.destination ?? '';
+      const period = vars.period ?? '';
+      const reason = vars.rejectionReason ? ` 사유: ${vars.rejectionReason}` : '';
+      return {
+        title: '[HRM] 출장 반려',
+        body: `${dest} 출장(${period})이 반려되었습니다.${reason}`,
+        linkPath: vars.tripId ? `/trips/${vars.tripId}` : '/trips',
+      };
+    }
+    case 'trip_cancelled': {
+      const emp = vars.employeeName ?? '직원';
+      const dest = vars.destination ?? '';
+      const period = vars.period ?? '';
+      return {
+        title: '[HRM] 출장 본인 취소',
+        body: `${emp}님이 ${dest} 출장(${period}) 신청을 취소했습니다.`,
+        linkPath: '/approvals',
+      };
+    }
+    case 'trip_completed': {
+      const emp = vars.employeeName ?? '직원';
+      const dest = vars.destination ?? '';
+      return {
+        title: '[HRM] 출장 복귀 보고서 제출',
+        body: `${emp}님이 ${dest} 출장 복귀 보고서를 제출했습니다.`,
+        linkPath: vars.tripId ? `/trips/${vars.tripId}` : '/admin/trips',
+      };
+    }
+
+    // ============================
+    // v1.2.1 — 재택근무
+    // ============================
+    case 'remote_submitted': {
+      const emp = vars.employeeName ?? '직원';
+      const period = vars.period ?? '';
+      const days = vars.totalDays ?? '';
+      return {
+        title: '[HRM] 재택근무 결재 요청',
+        body: `${emp}님이 재택근무 ${days}일(${period})을 신청했습니다.`,
+        linkPath: '/approvals',
+      };
+    }
+    case 'remote_approved': {
+      const period = vars.period ?? '';
+      return {
+        title: '[HRM] 재택근무 승인',
+        body: `재택근무 신청(${period})이 승인되었습니다.`,
+        linkPath: '/remote-work',
+      };
+    }
+    case 'remote_rejected': {
+      const period = vars.period ?? '';
+      const reason = vars.rejectionReason ? ` 사유: ${vars.rejectionReason}` : '';
+      return {
+        title: '[HRM] 재택근무 반려',
+        body: `재택근무 신청(${period})이 반려되었습니다.${reason}`,
+        linkPath: '/remote-work',
+      };
+    }
+
+    // ============================
+    // v1.2.1 — 경조사
+    // ============================
+    case 'family_event_submitted': {
+      const emp = vars.employeeName ?? '직원';
+      const policyName = vars.policyName ?? '경조사';
+      const period = vars.period ?? '';
+      const days = vars.totalDays ?? '';
+      return {
+        title: '[HRM] 경조사 휴가 결재 요청',
+        body: `${emp}님이 ${policyName} ${days}일(${period})을 신청했습니다.`,
+        linkPath: '/approvals',
+      };
+    }
+
+    // ============================
+    // v1.2.1 — 공지사항
+    // ============================
+    case 'announcement_published': {
+      const title = vars.announcementTitle ?? '신규 공지';
+      return {
+        title: '[HRM] 새 공지사항',
+        body: title.toString(),
+        linkPath: '/announcements',
+      };
+    }
   }
 }

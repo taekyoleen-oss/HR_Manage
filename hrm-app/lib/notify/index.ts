@@ -15,6 +15,17 @@ const CHANNEL_POLICY: Record<NotifyInput['kind'], NotifyChannel[]> = {
   leave_rejected: ['inapp', 'sms'],
   leave_cancelled_by_employee: ['inapp'],
   employee_invitation: ['email'],
+  // v1.2.1 — 출장/재택/경조사/공지
+  trip_submitted: ['inapp', 'sms'],
+  trip_approved: ['inapp', 'sms'],
+  trip_rejected: ['inapp', 'sms'],
+  trip_cancelled: ['inapp'],
+  trip_completed: ['inapp'],
+  remote_submitted: ['inapp'],
+  remote_approved: ['inapp'],
+  remote_rejected: ['inapp'],
+  family_event_submitted: ['inapp', 'sms'],
+  announcement_published: ['inapp'],
 };
 
 // 단일 진입점. 라우팅 정책 → 채널별 driver 순차 호출.

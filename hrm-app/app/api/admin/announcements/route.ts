@@ -1,8 +1,10 @@
 import { NextRequest } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { getAppUser } from '@/lib/auth/guards';
 import { announcementUpsertSchema } from '@/lib/validations/announcement';
 import { fail, failFromPg, failZod, ok } from '@/lib/api/response';
+import { notify } from '@/lib/notify';
 
 export async function POST(req: NextRequest) {
   const user = await getAppUser();
@@ -28,11 +30,39 @@ export async function POST(req: NextRequest) {
     author_id: user.employeeId,
   };
 
+  const isNew = !v.id;
   const { data, error } = v.id
     ? await supabase.from('hrm_announcements').update(row).eq('id', v.id).select('id').maybeSingle()
     : await supabase.from('hrm_announcements').insert(row).select('id').maybeSingle();
 
   if (error) return failFromPg(error.message);
+
+  // 신규 게시 공지는 전직원에게 인앱 알림 (urgent 카테고리만 SMS 동반)
+  if (isNew && v.isPublished && data?.id) {
+    void (async () => {
+      try {
+        const admin = getAdminClient();
+        const { data: employees } = await admin
+          .from('hrm_employees')
+          .select('id')
+          .eq('employment_status', 'active');
+        if (!employees) return;
+        for (const e of employees) {
+          if (e.id === user.employeeId) continue;
+          await notify({
+            kind: 'announcement_published',
+            recipientEmployeeId: e.id,
+            senderEmployeeId: user.employeeId,
+            relatedResourceType: 'announcement',
+            relatedResourceId: data.id,
+            vars: { announcementTitle: v.title },
+            forceChannels: v.category === 'urgent' ? ['inapp', 'sms'] : ['inapp'],
+          });
+        }
+      } catch { /* ignore */ }
+    })();
+  }
+
   return ok({ id: data?.id });
 }
 

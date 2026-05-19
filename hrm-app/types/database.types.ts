@@ -1691,6 +1691,16 @@ export type Database = {
         | "leave_rejected"
         | "leave_cancelled_by_employee"
         | "employee_invitation"
+        | "trip_submitted"
+        | "trip_approved"
+        | "trip_rejected"
+        | "trip_cancelled"
+        | "trip_completed"
+        | "remote_submitted"
+        | "remote_approved"
+        | "remote_rejected"
+        | "family_event_submitted"
+        | "announcement_published"
       hrm_position_change_type:
         | "hire"
         | "promotion"
@@ -1914,6 +1924,16 @@ export const Constants = {
         "leave_rejected",
         "leave_cancelled_by_employee",
         "employee_invitation",
+        "trip_submitted",
+        "trip_approved",
+        "trip_rejected",
+        "trip_cancelled",
+        "trip_completed",
+        "remote_submitted",
+        "remote_approved",
+        "remote_rejected",
+        "family_event_submitted",
+        "announcement_published",
       ],
       hrm_position_change_type: [
         "hire",

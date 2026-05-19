@@ -1,8 +1,10 @@
 import { NextRequest } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { getAppUser } from '@/lib/auth/guards';
 import { remoteWorkApproveSchema } from '@/lib/validations/remote-work';
 import { fail, failFromPg, failZod, ok } from '@/lib/api/response';
+import { notify } from '@/lib/notify';
 
 export async function POST(req: NextRequest) {
   const user = await getAppUser();
@@ -19,5 +21,27 @@ export async function POST(req: NextRequest) {
   const supabase = await createServerClient();
   const { error } = await supabase.rpc('approve_remote_work', { req_id: parsed.data.requestId });
   if (error) return failFromPg(error.message);
+
+  void (async () => {
+    try {
+      const admin = getAdminClient();
+      const { data: r } = await admin
+        .from('hrm_remote_work_requests')
+        .select('employee_id, start_date, end_date')
+        .eq('id', parsed.data.requestId)
+        .maybeSingle();
+      if (r) {
+        await notify({
+          kind: 'remote_approved',
+          recipientEmployeeId: r.employee_id,
+          senderEmployeeId: user.employeeId,
+          relatedResourceType: 'remote_work',
+          relatedResourceId: parsed.data.requestId,
+          vars: { period: `${r.start_date}~${r.end_date}` },
+        });
+      }
+    } catch { /* ignore */ }
+  })();
+
   return ok({ requestId: parsed.data.requestId });
 }

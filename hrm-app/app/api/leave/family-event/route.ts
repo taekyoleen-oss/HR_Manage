@@ -1,8 +1,10 @@
 import { NextRequest } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { getAppUser } from '@/lib/auth/guards';
 import { familyEventLeaveRequestSchema } from '@/lib/validations/family-event';
 import { fail, failFromPg, failZod, ok } from '@/lib/api/response';
+import { notify } from '@/lib/notify';
 
 export async function POST(req: NextRequest) {
   const user = await getAppUser();
@@ -27,5 +29,37 @@ export async function POST(req: NextRequest) {
 
   if (error) return failFromPg(error.message);
   if (!newId) return fail('NO_ID', '신청 생성 실패', 500);
+
+  void (async () => {
+    try {
+      const admin = getAdminClient();
+      const { data: r } = await admin
+        .from('hrm_leave_requests')
+        .select('approver_id, total_days')
+        .eq('id', newId as string)
+        .maybeSingle();
+      const { data: policy } = await admin
+        .from('hrm_family_event_policies')
+        .select('name')
+        .eq('id', v.policyId)
+        .maybeSingle();
+      if (r?.approver_id) {
+        await notify({
+          kind: 'family_event_submitted',
+          recipientEmployeeId: r.approver_id,
+          senderEmployeeId: user.employeeId,
+          relatedResourceType: 'leave_request',
+          relatedResourceId: newId as string,
+          vars: {
+            employeeName: user.name,
+            policyName: policy?.name ?? '경조사',
+            period: `${v.startDate}~${v.endDate}`,
+            totalDays: Number(r.total_days).toFixed(1),
+          },
+        });
+      }
+    } catch { /* ignore */ }
+  })();
+
   return ok({ requestId: newId });
 }
